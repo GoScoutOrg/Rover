@@ -5,27 +5,39 @@ import RPi.GPIO as GPIO
 from time import sleep
 import rover
 
-def forward():
-    con3.ForwardM1(RC_ADDR.FR, 100)
-    con2.ForwardM1(RC_ADDR.BR, 100)
-
-    con2.BackwardM1(RC_ADDR.FL, 100)
-    con3.BackwardM1(RC_ADDR.BL, 100)
-
-    con1.ForwardM1(RC_ADDR.MID,100)
-    con1.BackwardM2(RC_ADDR.MID, 100)
+def forward(speed):
+    con3.ForwardM1(RC_ADDR.FR, speed)
+    con2.BackwardM1(RC_ADDR.FL, speed)
+    con1.BackwardM1(RC_ADDR.MID, speed)
+    con1.ForwardM2(RC_ADDR.MID, speed)
+    con2.ForwardM1(RC_ADDR.BR, speed)
+    con3.BackwardM1(RC_ADDR.BL, speed)
 
 
+def backward(speed):
+    con3.BackwardM1(RC_ADDR.FR, speed)
+    con2.BackwardM1(RC_ADDR.BR, speed)
 
-def backward():
-    con3.BackwardM1(RC_ADDR.FR, 100)
-    con2.BackwardM1(RC_ADDR.BR, 100)
+    con2.ForwardM1(RC_ADDR.FL, speed)
+    con3.ForwardM1(RC_ADDR.BL, speed)
 
-    con2.ForwardM1(RC_ADDR.FL, 100)
-    con3.ForwardM1(RC_ADDR.BL, 100)
+    con1.ForwardM1(RC_ADDR.MID,speed)
+    con1.BackwardM2(RC_ADDR.MID, speed)
 
-    con1.BackwardM1(RC_ADDR.MID,100)
-    con1.ForwardM2(RC_ADDR.MID, 100)
+def stop():
+    con3.BackwardM1(RC_ADDR.FR, 0)
+    con2.ForwardM1(RC_ADDR.BR, 0)
+
+    con1.BackwardM1(RC_ADDR.MID, 0)
+    con1.ForwardM2(RC_ADDR.MID, 0)
+
+    con2.ForwardM1(RC_ADDR.FL, 0)
+    con3.BackwardM1(RC_ADDR.BL, 0)
+
+    con3.BackwardM2(RC_ADDR.FR, 0)
+    con2.ForwardM2(RC_ADDR.BR, 0)
+    con2.ForwardM2(RC_ADDR.FL, 0)
+    con3.BackwardM2(RC_ADDR.BL, 0)
 
 GPIO.setmode(GPIO.BOARD)
 con1 = Roboclaw("/dev/ttyS0", 115200, PowerGPIO.ML_MR)
@@ -44,41 +56,13 @@ if con3.Open() == 0:
 else:
     print("Successfully Connected")
 
+forward(100)
 
+sleep(3)
 
+backward(100)
 
+sleep(3)
 
-# con2.ForwardM2(RC_ADDR.FR,40)
-# con3.ForwardM2(RC_ADDR.BL,40)
-# con2.ForwardM2(RC_ADDR.FL,40)
-# con3.ForwardM2(RC_ADDR.BR,40)
+stop();
 
-#forward()
-
-sleep(0)
-
-#backward()
-
-sleep(0)
-
-# con3.ForwardM1(RC_ADDR.FR,0)
-# con2.ForwardM1(RC_ADDR.BL,0)
-# con3.ForwardM1(RC_ADDR.FL,0)
-# con2.ForwardM1(RC_ADDR.BR,0)
-#
-# con1.ForwardM1(RC_ADDR.MID,0)
-# con1.ForwardM2(RC_ADDR.MID,0)
-
-con3.BackwardM1(RC_ADDR.FR, 0)
-con2.ForwardM1(RC_ADDR.BR, 0)
-
-con1.BackwardM1(RC_ADDR.MID, 0)
-con1.ForwardM2(RC_ADDR.MID, 0)
-
-con2.ForwardM1(RC_ADDR.FL, 0)
-con3.BackwardM1(RC_ADDR.BL, 0)
-
-con3.BackwardM2(RC_ADDR.FR, 0)
-con2.ForwardM2(RC_ADDR.BR, 0)
-con2.ForwardM2(RC_ADDR.FL, 0)
-con3.BackwardM2(RC_ADDR.BL, 0)
