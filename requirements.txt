@@ -1,0 +1,6 @@
+numpy==1.21.0
+pyserial==3.5
+Adafruit-Blinka==6.15.0
+adafruit-circuitpython-fxas21002c==2.1.11
+adafruit-circuitpython-fxos8700==2.1.10
+gps==3.19

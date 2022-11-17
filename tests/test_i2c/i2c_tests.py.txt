@@ -1,0 +1,25 @@
+import i2c_bus as i2c
+
+'''
+This test file is for confirming that the data sent across I2C is correct.
+Can be used to send commands, however this is not designed to continue the 
+transmission for lengthy commands (send/receive file).
+
+-Zarek
+'''
+
+def main():
+    bus = i2c.I2CBus()
+
+    while True:
+        msg = input('Send a message to the Jetson:\n')
+
+        if (msg[:12] == 'file receive') or (msg[:9] == 'file send'):
+            continue
+        
+        sqn = int(input('Select sequence number: '))
+
+        pkt = bus.send_and_wait(msg.encode(), 'c', sqn)
+
+if __name__ == '__main__':
+    main()

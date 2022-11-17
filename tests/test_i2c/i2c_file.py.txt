@@ -1,0 +1,48 @@
+import i2c_bus as i2c
+
+'''
+This test file tests sending files back and forth from the Pi to the Jetson
+across I2C. Sends/receives one file before exiting.
+
+Do not writeover important files unless you have them backed up.
+
+-Zarek
+'''
+
+def main():
+    bus = i2c.I2CBus()
+
+    direction = input('Send or Receive file? ')
+
+    if direction == 'send':
+        filename = input('Send file to Jetson:\n')
+
+        if filename == 'monitor.py':
+            print('DONT')
+            return
+
+        if bus.write_file(filename):
+            print('success')
+        else:
+            print('failure')
+
+
+    elif direction == 'receive':
+        filename = input('Receive file from Jetson:\n')
+
+        if filename == 'i2c_bus.py':
+            print('DONT')
+            return
+
+        if bus.read_file(filename):
+            print('success')
+        else:
+            print('failure')
+
+
+    else:
+        print('Not recognizeable')
+    
+
+if __name__ == '__main__':
+    main()

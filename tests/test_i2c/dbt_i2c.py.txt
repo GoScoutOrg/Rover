@@ -1,0 +1,54 @@
+import i2c_bus as i2c
+
+'''
+This file was to showcase the functionality of the I2C system by requesting
+the Jetson start the vision system, take either an rgb or depth image, and
+sending the file one packet at a time across I2C. 
+
+This was the code used in our DBT1 demo, W2022.
+
+-Zarek
+'''
+
+def main():
+    bus = i2c.I2CBus()
+
+    if not bus.send_and_wait('vision start'.encode(), 'c', 0):
+        print('Takes a while to start the system')
+
+    try:
+        while True:
+            opt = input('rgb or depth: ')
+
+            if opt == 'rgb':
+                msg = 'take picture'
+
+                if not bus.send_and_wait(msg.encode(), 'c', 0):
+                    print('Picture not taken')
+                    return
+
+                if bus.read_file('rgb.jpeg'):
+                    print('success')
+                else:
+                    print('failure')
+
+            elif opt == 'depth':
+                msg = 'take depth image'
+
+                if not bus.send_and_wait(msg.encode(), 'c', 0):
+                    print('Picture not taken')
+                    return
+
+                if bus.read_file('depth.jpeg'):
+                    print('success')
+                else:
+                    print('failure')
+
+    except KeyboardInterrupt:
+        if not bus.send_and_wait('vision stop'.encode(), 'c', 0):
+            print('Takes a while to stop the vision system')
+            
+        print('Exiting')
+
+if __name__ == '__main__':
+    main()
