@@ -5,6 +5,7 @@ from util import PowerGPIO, opposite_dir, UARTException, MotorPos, UART, RC_ADDR
 import RPi.GPIO as GPIO
 from time import sleep
 
+voltage = 0
 
 def checkUart():
     printHeading("UART")
@@ -29,6 +30,7 @@ def checkUart():
     printStatusBin("RearRight", con2.ReadVersion(RC_ADDR.BR)[0]==1)
     printStatusBin("RearLeft", con3.ReadVersion(RC_ADDR.BL)[0]==1)
 
+    return con1.ReadMainBatteryVoltage(RC_ADDR.MID)
 
 
 class bcolors:
@@ -75,5 +77,10 @@ printStatusBin("EthCon", False)
 printStatusBin("IP", True)
 printStatusBin("Telemetry", True)
 
-checkUart()
 
+
+
+voltage = checkUart()[1]
+
+printHeading("Battery")
+printStatusBin("Main (" + str(voltage/10)+") ", True)

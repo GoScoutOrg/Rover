@@ -76,7 +76,7 @@ class Rover:
         # for thread in threads:
         #     thread.join()
         
-        breakpoint()
+        #breakpoint()
 
     def init_uart(self):
         # initialize the three uart locks
@@ -323,3 +323,4 @@ class Rover:
 
 if __name__ == "__main__":
     r = Rover()
+
