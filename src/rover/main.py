@@ -13,11 +13,9 @@ def parse_location(gps_location):
     target_long = gps_location[8:]
     #call brets calc functions
     
-    
 
 def main():
     pass
-
 
 if __name__ == "__main__":
     main()
