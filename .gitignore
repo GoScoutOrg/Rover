@@ -136,3 +136,5 @@ dmypy.json
 .vscode/
 
 **/.ccls-cache
+**/.DS_Store
+**/*.zip
