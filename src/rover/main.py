@@ -1,14 +1,17 @@
-from multiprocessing.dummy import Process
 import math
+
+from roboclaw_3 import Roboclaw
+from util import RC_ADDR
+from util import PowerGPIO, UARTException, RC_ADDR
+
+import sys
+from multiprocessing import Process
 from Communications.communications.parent import parent_proc
 
-function_set = {
-        "GPS": lambda args : parse_location({int(args[0])}),
-    }
-communications = Process(target=parent_proc, args=("192.168.4.10",7676, "192.168.4.3", 7777, function_set))
+
 
 def parse_location(gps_location):
-    communications.send_packet(flag="EX_DONE", args=[])
+    send_packet(flag="EX_DONE", args=[])
     target_lat = gps_location[0:8]
     target_long = gps_location[8:]
     #fetch rover location
@@ -38,8 +41,21 @@ def coords_to_target_distance(target_long, target_lat, curr_long, curr_lat):
     return math.sqrt((delta_x**2)+(delta_y**2))
 
 def main():
+
+    con1 = Roboclaw("/dev/ttyS0", 115200, PowerGPIO.ML_MR)
+    if con1.Open() == 0:
+        raise UARTException(con1)
+
+    function_set = {
+            "GPS": parse_location,
+            "MOVE": con1.ForwardM1
+        }
+
     communications = Process(target=parent_proc, args=("192.168.4.3",7777, "192.168.4.10", 7676, function_set))
     communications.start()
+
+
+    communications.join()
 
 if __name__ == "__main__":
     main()
