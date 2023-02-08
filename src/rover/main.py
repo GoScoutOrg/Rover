@@ -23,6 +23,12 @@ def parse_location(gps_location):
     deg_to_rotate = coords_to_delta_theta(target_long, target_lat, curr_long, curr_lat, curr_theta_deg)
     distance_to_move = coords_to_target_distance(target_long, target_lat, curr_long, curr_lat)
 
+    # need to do time calculations/calibration
+    
+
+    Move_Forward(distance_to_move)
+
+
 def coords_to_delta_theta(target_long, target_lat, curr_long, curr_lat, curr_theta_deg):
     delta_x = target_long - curr_long
     delta_y = target_lat - curr_lat
@@ -46,6 +52,13 @@ if con1.Open() == 0:
 def move_middle_wheel_test(args):
     speed = int(args[0])
     con1.ForwardM2(RC_ADDR.MID, speed)
+
+def Move_Forward(distance):
+    speed = 50
+    time = distance/speed
+    con1.ForwardM2(RC_ADDR.MID, speed)
+    time.sleep(time)
+    con1.ForwardM2(RC_ADDR.MID, 0)
 
 def main():
 
