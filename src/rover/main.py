@@ -5,8 +5,10 @@ from util import RC_ADDR
 from util import PowerGPIO, UARTException, RC_ADDR
 
 import sys
-from multiprocessing import Process
-from Communications.communications.parent import parent_proc
+from multiprocessing import Process, Pipe
+sys.path.append("../../../Communications")
+# from Communications.communications.parent import parent_proc
+import communications
 
 
 
@@ -51,9 +53,9 @@ def main():
             "MOVE": con1.ForwardM1
         }
 
+    rover_pipe, comms_pipe = Pipe()
     communications = Process(target=parent_proc, args=("192.168.4.3",7777, "192.168.4.10", 7676, function_set))
     communications.start()
-
 
     communications.join()
 
