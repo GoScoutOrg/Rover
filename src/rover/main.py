@@ -8,9 +8,7 @@ import sys
 from multiprocessing import Process, Pipe
 sys.path.append("../../../Communications")
 # from Communications.communications.parent import parent_proc
-import communications
-
-
+import communications as c
 
 def parse_location(gps_location):
     send_packet(flag="EX_DONE", args=[])
@@ -24,8 +22,6 @@ def parse_location(gps_location):
     #call brets calc functions
     deg_to_rotate = coords_to_delta_theta(target_long, target_lat, curr_long, curr_lat, curr_theta_deg)
     distance_to_move = coords_to_target_distance(target_long, target_lat, curr_long, curr_lat)
-
-
 
 def coords_to_delta_theta(target_long, target_lat, curr_long, curr_lat, curr_theta_deg):
     delta_x = target_long - curr_long
@@ -42,19 +38,25 @@ def coords_to_target_distance(target_long, target_lat, curr_long, curr_lat):
     delta_y = target_lat - curr_lat
     return math.sqrt((delta_x**2)+(delta_y**2))
 
+
+con1 = Roboclaw("/dev/ttyS0", 115200, PowerGPIO.ML_MR)
+if con1.Open() == 0:
+    raise UARTException(con1)
+
+def move_middle_wheel_test(args):
+    speed = int(args[0])
+    con1.ForwardM2(RC_ADDR.MID, speed)
+
 def main():
 
-    con1 = Roboclaw("/dev/ttyS0", 115200, PowerGPIO.ML_MR)
-    if con1.Open() == 0:
-        raise UARTException(con1)
 
     function_set = {
             "GPS": parse_location,
-            "MOVE": con1.ForwardM1
+            "MOVE": move_middle_wheel_test 
         }
 
     rover_pipe, comms_pipe = Pipe()
-    communications = Process(target=parent_proc, args=("192.168.1.3",7676, "192.168.4.3", 7777, function_set))
+    communications = Process(target=parent_proc, args=("192.168.4.1",7676, "192.168.4.3", 7777, function_set))
     communications.start()
 
     communications.join()
