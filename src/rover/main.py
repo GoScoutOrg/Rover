@@ -54,7 +54,7 @@ def main():
         }
 
     rover_pipe, comms_pipe = Pipe()
-    communications = Process(target=parent_proc, args=("192.168.4.3",7777, "192.168.4.10", 7676, function_set))
+    communications = Process(target=parent_proc, args=("192.168.1.3",7676, "192.168.4.3", 7777, function_set))
     communications.start()
 
     communications.join()
