@@ -11,7 +11,7 @@ sys.path.append("../../../Communications")
 import communications as c
 
 def parse_location(gps_location):
-    send_packet(flag="EX_DONE", args=[])
+    c.send_packet(flag="EX_DONE", args=[])
     target_lat = gps_location[0:8]
     target_long = gps_location[8:]
     #fetch rover location
@@ -56,7 +56,7 @@ def main():
         }
 
     rover_pipe, comms_pipe = Pipe()
-    communications = Process(target=parent_proc, args=("192.168.4.1",7676, "192.168.4.3", 7777, function_set))
+    communications = Process(target=c.parent_proc, args=("192.168.4.1",7676, "192.168.4.3", 7777, function_set))
     communications.start()
 
     communications.join()
