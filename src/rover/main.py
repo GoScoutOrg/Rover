@@ -4,6 +4,7 @@ from roboclaw_3 import Roboclaw
 from util import RC_ADDR
 from util import PowerGPIO, UARTException, RC_ADDR
 import RPi.GPIO as GPIO
+import gps_file as gps
 
 import sys
 from multiprocessing import Process, Pipe
@@ -17,8 +18,10 @@ def parse_location(gps_location):
     target_lat = gps_location[0:8]
     target_long = gps_location[8:]
     #fetch rover location
-    curr_long = 2
-    curr_lat = 1
+    my_gps = gps.setup_gps()
+
+    curr_long = my_gps[1]
+    curr_lat = my_gps[0]
     curr_theta_deg = 0
 
     #call brets calc functions
