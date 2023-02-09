@@ -6,6 +6,8 @@ def setup_gps():
 
     gps = mp.SAM_M8Q()
 
+    time.sleep(1)
+
     #Set the communication protocol to ubx for input and output
     gps.ubx_only()
     gps.wait_for_acknowledge(ubx.CFG_CLASS, ubx.CFG_PRT)
