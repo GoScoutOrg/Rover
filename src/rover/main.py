@@ -3,6 +3,7 @@ import math
 from roboclaw_3 import Roboclaw
 from util import RC_ADDR
 from util import PowerGPIO, UARTException, RC_ADDR
+import RPi.GPIO as GPIO
 
 import sys
 from multiprocessing import Process, Pipe
@@ -44,6 +45,8 @@ def coords_to_target_distance(target_long, target_lat, curr_long, curr_lat):
     delta_x = target_long - curr_long
     delta_y = target_lat - curr_lat
     return math.sqrt((delta_x**2)+(delta_y**2))
+
+GPIO.setmode(GPIO.BOARD)
 
 con1 = Roboclaw("/dev/ttyS0", 115200, PowerGPIO.ML_MR)
 con2 = Roboclaw("/dev/ttyAMA1", 115200, PowerGPIO.FL_BR)
