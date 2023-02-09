@@ -1,5 +1,5 @@
 import melopero_samm8q as mp
-import meloper_ubx as ubx
+import melopero_ubx as ubx
 import time
 
 def setup_gps():

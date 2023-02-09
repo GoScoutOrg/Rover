@@ -14,24 +14,22 @@ import communications as c
 from time import sleep
 
 def parse_location(gps_location):
-    c.send_packet(flag="EX_DONE", args=[])
-    target_lat = gps_location[0:8]
-    target_long = gps_location[8:]
+    #target_lat = gps_location[0:8]
+    #target_long = gps_location[8:]
     #fetch rover location
     my_gps = gps.setup_gps()
 
-    curr_long = my_gps[1]
-    curr_lat = my_gps[0]
-    curr_theta_deg = 0
+    # curr_long = my_gps[1]
+    # curr_lat = my_gps[0]
+    # curr_theta_deg = 0
 
     #call brets calc functions
-    deg_to_rotate = coords_to_delta_theta(target_long, target_lat, curr_long, curr_lat, curr_theta_deg)
-    distance_to_move = coords_to_target_distance(target_long, target_lat, curr_long, curr_lat)
+    # deg_to_rotate = coords_to_delta_theta(target_long, target_lat, curr_long, curr_lat, curr_theta_deg)
+    # distance_to_move = coords_to_target_distance(target_long, target_lat, curr_long, curr_lat)
 
     # need to do time calculations/calibration
-    
 
-    Move_Forward(distance_to_move)
+    Move_Forward(100)
 
 
 def coords_to_delta_theta(target_long, target_lat, curr_long, curr_lat, curr_theta_deg):
@@ -72,12 +70,10 @@ def move_middle_wheel_test(args):
 
 def Move_Forward(distance):
     speed = 50
-    time = int(distance[0])/speed
-    #con1.ForwardM2(RC_ADDR.MID, speed)
+    time = distance/speed
     forward(speed)
     sleep(time)
     forward(0)
-    #con1.ForwardM2(RC_ADDR.MID, 0)
 
 def forward(speed):
     con3.ForwardM1(RC_ADDR.FR, speed)
