@@ -29,7 +29,7 @@ def parse_location(gps_location):
 
     # need to do time calculations/calibration
 
-    Move_Forward(100)
+    Move_Forward(300)
 
 
 def coords_to_delta_theta(target_long, target_lat, curr_long, curr_lat, curr_theta_deg):
