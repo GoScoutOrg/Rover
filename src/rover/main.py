@@ -7,8 +7,9 @@ from util import PowerGPIO, UARTException, RC_ADDR
 import sys
 from multiprocessing import Process, Pipe
 sys.path.append("../../../Communications")
-# from Communications.communications.parent import parent_proc
 import communications as c
+
+from time import sleep
 
 def parse_location(gps_location):
     c.send_packet(flag="EX_DONE", args=[])
@@ -44,33 +45,6 @@ def coords_to_target_distance(target_long, target_lat, curr_long, curr_lat):
     delta_y = target_lat - curr_lat
     return math.sqrt((delta_x**2)+(delta_y**2))
 
-
-# con1 = Roboclaw("/dev/ttyS0", 115200, PowerGPIO.ML_MR)
-# if con1.Open() == 0:
-#     raise UARTException(con1)
-
-def move_middle_wheel_test(args):
-    speed = int(args[0])
-    con1.ForwardM2(RC_ADDR.MID, speed)
-
-def Move_Forward(distance):
-    speed = 50
-    time = int(distance[0])/speed
-    #con1.ForwardM2(RC_ADDR.MID, speed)
-    forward(speed)
-    time.sleep(time)
-    forward(0)
-    #con1.ForwardM2(RC_ADDR.MID, 0)
-
-def forward(speed):
-    con3.ForwardM1(RC_ADDR.FR, speed)
-    con2.BackwardM1(RC_ADDR.FL, speed)
-    con1.BackwardM1(RC_ADDR.MID, speed)
-    con1.ForwardM2(RC_ADDR.MID, speed)
-    con2.ForwardM1(RC_ADDR.BR, speed)
-    con3.BackwardM1(RC_ADDR.BL, speed)
-
-
 con1 = Roboclaw("/dev/ttyS0", 115200, PowerGPIO.ML_MR)
 con2 = Roboclaw("/dev/ttyAMA1", 115200, PowerGPIO.FL_BR)
 con3 = Roboclaw("/dev/ttyAMA2", 115200, PowerGPIO.FR_BL)
@@ -86,10 +60,28 @@ if con3.Open() == 0:
     raise UARTException(con3)
 else:
     print("Successfully Connected")
+def move_middle_wheel_test(args):
+    speed = int(args[0])
+    con1.ForwardM2(RC_ADDR.MID, speed)
+
+def Move_Forward(distance):
+    speed = 50
+    time = int(distance[0])/speed
+    #con1.ForwardM2(RC_ADDR.MID, speed)
+    forward(speed)
+    sleep(time)
+    forward(0)
+    #con1.ForwardM2(RC_ADDR.MID, 0)
+
+def forward(speed):
+    con3.ForwardM1(RC_ADDR.FR, speed)
+    con2.BackwardM1(RC_ADDR.FL, speed)
+    con1.BackwardM1(RC_ADDR.MID, speed)
+    con1.ForwardM2(RC_ADDR.MID, speed)
+    con2.ForwardM1(RC_ADDR.BR, speed)
+    con3.BackwardM1(RC_ADDR.BL, speed)
 
 def main():
-
-
     function_set = {
             "GPS": parse_location,
             "MOVE": Move_Forward 
