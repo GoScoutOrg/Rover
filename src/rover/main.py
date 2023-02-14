@@ -13,6 +13,30 @@ import communications as c
 
 from time import sleep
 
+#----------------------------------------------------------------#
+
+#----------------------------------------------------------------#
+GPIO.setmode(GPIO.BOARD)
+
+con1 = Roboclaw("/dev/ttyS0", 115200, PowerGPIO.ML_MR)
+con2 = Roboclaw("/dev/ttyAMA1", 115200, PowerGPIO.FL_BR)
+con3 = Roboclaw("/dev/ttyAMA2", 115200, PowerGPIO.FR_BL)
+if con1.Open() == 0:
+    raise UARTException(con1)
+else:
+    print("Successfully Connected")
+if con2.Open() == 0:
+    raise UARTException(con2)
+else:
+    print("Successfully Connected")
+if con3.Open() == 0:
+    raise UARTException(con3)
+else:
+    print("Successfully Connected")
+
+#----------------------------------------------------------------#
+
+#----------------------------------------------------------------#
 def parse_location(gps_location):
     #target_lat = gps_location[0:8]
     #target_long = gps_location[8:]
@@ -47,26 +71,6 @@ def coords_to_target_distance(target_long, target_lat, curr_long, curr_lat):
     delta_y = target_lat - curr_lat
     return math.sqrt((delta_x**2)+(delta_y**2))
 
-GPIO.setmode(GPIO.BOARD)
-
-con1 = Roboclaw("/dev/ttyS0", 115200, PowerGPIO.ML_MR)
-con2 = Roboclaw("/dev/ttyAMA1", 115200, PowerGPIO.FL_BR)
-con3 = Roboclaw("/dev/ttyAMA2", 115200, PowerGPIO.FR_BL)
-if con1.Open() == 0:
-    raise UARTException(con1)
-else:
-    print("Successfully Connected")
-if con2.Open() == 0:
-    raise UARTException(con2)
-else:
-    print("Successfully Connected")
-if con3.Open() == 0:
-    raise UARTException(con3)
-else:
-    print("Successfully Connected")
-def move_middle_wheel_test(args):
-    speed = int(args[0])
-    con1.ForwardM2(RC_ADDR.MID, speed)
 
 def Move_Forward(distance):
     speed = 50
