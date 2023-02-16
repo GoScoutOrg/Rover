@@ -70,9 +70,10 @@ def coords_to_delta_theta(target_long, target_lat, curr_long, curr_lat, curr_the
     return delta_theta_deg
 
 def coords_to_target_distance(target_long, target_lat, curr_long, curr_lat):
+    METER_TO_COORD_DEG_RATIO = 111139
     delta_x = target_long - curr_long
     delta_y = target_lat - curr_lat
-    return math.sqrt((delta_x**2)+(delta_y**2))
+    return math.sqrt((delta_x**2)+(delta_y**2)) * METER_TO_COORD_DEG_RATIO
 
 def move_Forward(distance):
     speed = 50
