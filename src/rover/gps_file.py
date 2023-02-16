@@ -21,7 +21,7 @@ def setup_gps():
             # this results in a navigation solution every 100ms 
             gps.set_measurement_frequency(50, 2)
             gps.wait_for_acknowledge(ubx.CFG_CLASS, ubx.CFG_RATE)
-            return
+            return gps
         except IOError:
             time.sleep(1)
 
