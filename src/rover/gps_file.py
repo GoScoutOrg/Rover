@@ -23,20 +23,26 @@ def setup_gps():
             gps.wait_for_acknowledge(ubx.CFG_CLASS, ubx.CFG_RATE)
             return gps
         except IOError:
+            print("IO-ERROR")
             time.sleep(1)
 
 def get_gps(gps):
-    #take a measurement every 0.1 seconds for an hour 
-    for _ in range(36000):
-        info = gps.get_pvt()
-        
-        #if there is a valid measurement
-        if info:
-            # print("Valid time : {}, Valid date : {}".format(info[gps.VALID_TIME_TAG], info[gps.VALID_DATE_TAG]))
-            # print("[{}/{}/{}] {}h:{}m:{}s".format(info[gps.DAY_TAG], info[gps.MONTH_TAG], info[gps.YEAR_TAG],
-            #     info[gps.HOUR_TAG], info[gps.MINUTE_TAG], info[gps.SECOND_TAG]))
-            # print("GNSS Fix: {}".format(info[gps.GNSS_FIX_TAG]))
-            print("Coordinates: {} N {} E".format(info[gps.LATITUDE_TAG], info[gps.LONGITUDE_TAG]))
-            return (info[gps.LATITUDE_TAG], info[gps.LONGITUDE_TAG])
-        else :
-            print("Something went wrong and no measurement was taken")
+    while True:
+        try:
+            #take a measurement every 0.1 seconds for an hour 
+            for _ in range(36000):
+                info = gps.get_pvt()
+                
+                #if there is a valid measurement
+                if info:
+                    # print("Valid time : {}, Valid date : {}".format(info[gps.VALID_TIME_TAG], info[gps.VALID_DATE_TAG]))
+                    # print("[{}/{}/{}] {}h:{}m:{}s".format(info[gps.DAY_TAG], info[gps.MONTH_TAG], info[gps.YEAR_TAG],
+                    #     info[gps.HOUR_TAG], info[gps.MINUTE_TAG], info[gps.SECOND_TAG]))
+                    # print("GNSS Fix: {}".format(info[gps.GNSS_FIX_TAG]))
+                    print("Coordinates: {} N {} E".format(info[gps.LATITUDE_TAG], info[gps.LONGITUDE_TAG]))
+                    return (info[gps.LATITUDE_TAG], info[gps.LONGITUDE_TAG])
+                else:
+                    print("Something went wrong and no measurement was taken")
+        except IOError:
+            print("IO-ERROR")
+            time.sleep(1)

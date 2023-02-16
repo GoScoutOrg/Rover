@@ -39,8 +39,11 @@ else:
 #----------------------------------------------------------------#
 my_gps = gps.setup_gps()
 def parse_location(gps_location):
-    target_lat = gps_location[0:8]
-    target_long = gps_location[8:]
+    # Coordinates: 35.3000821 N -120.66105479999999 
+    # target_lat = gps_location[0:8]
+    # target_long = gps_location[8:]
+    target_lat = 35.3000821
+    target_long = -120.66105479999999
     #fetch rover location
 
     curr_long = curr_lat = None;
