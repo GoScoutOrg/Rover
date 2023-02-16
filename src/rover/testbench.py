@@ -77,7 +77,9 @@ def stop():
 
 GPIO.setmode(GPIO.BOARD)
 
-r = rover.Rover()
+
+
+#r = rover.Rover()
 
 con1 = Roboclaw("/dev/ttyS0", 115200, PowerGPIO.ML_MR)
 con2 = Roboclaw("/dev/ttyAMA1", 115200, PowerGPIO.FL_BR)
@@ -95,51 +97,52 @@ if con3.Open() == 0:
 else:
     print("Successfully Connected")
 
+# sleep(1)
+# forward(30)
+
+stop()
+# sleep(10)
+# con3.SpeedAccelDeccelPositionM2(RC_ADDR.FR, ACCEL, GOTO_SPEED, DECCEL, 300, 1)
+# con3.SpeedAccelDeccelPositionM2(RC_ADDR.BL, ACCEL, GOTO_SPEED, DECCEL, 300, 1)
+# con2.SpeedAccelDeccelPositionM2(RC_ADDR.FL, ACCEL, GOTO_SPEED, DECCEL, -300, 1)
+# con2.SpeedAccelDeccelPositionM2(RC_ADDR.BR, ACCEL, GOTO_SPEED, DECCEL, -300, 1)
+
 sleep(1)
-forward(30)
-sleep(4)
-stop()
-
-con3.SpeedAccelDeccelPositionM2(RC_ADDR.FR, ACCEL, GOTO_SPEED, DECCEL, 300, 1)
-con3.SpeedAccelDeccelPositionM2(RC_ADDR.BL, ACCEL, GOTO_SPEED, DECCEL, 300, 1)
-con2.SpeedAccelDeccelPositionM2(RC_ADDR.FL, ACCEL, GOTO_SPEED, DECCEL, -300, 1)
-con2.SpeedAccelDeccelPositionM2(RC_ADDR.BR, ACCEL, GOTO_SPEED, DECCEL, -300, 1)
-
-sleep(2)
-turn(30)
-sleep(3)
-stop()
-sleep(.5)
-turn2(30)
-sleep(3)
-stop()
-
-con3.SpeedAccelDeccelPositionM2(RC_ADDR.FR, ACCEL, GOTO_SPEED, DECCEL, -330, 1)
-con3.SpeedAccelDeccelPositionM2(RC_ADDR.BL, ACCEL, GOTO_SPEED, DECCEL, 220, 1)
-con2.SpeedAccelDeccelPositionM2(RC_ADDR.FL, ACCEL, GOTO_SPEED, DECCEL, -220, 1)
-con2.SpeedAccelDeccelPositionM2(RC_ADDR.BR, ACCEL, GOTO_SPEED, DECCEL, 330, 1)
-
-sleep(2)
-
+#turn(30)
 forward(20)
-
-sleep(4)
-
-backward(20)
-
-sleep(4)
-
-stop()
-
-
-con3.SpeedAccelDeccelPositionM2(RC_ADDR.FR, ACCEL, GOTO_SPEED, DECCEL, 0, 1)
-con3.SpeedAccelDeccelPositionM2(RC_ADDR.BL, ACCEL, GOTO_SPEED, DECCEL, 0, 1)
-con2.SpeedAccelDeccelPositionM2(RC_ADDR.FL, ACCEL, GOTO_SPEED, DECCEL, 0, 1)
-con2.SpeedAccelDeccelPositionM2(RC_ADDR.BR, ACCEL, GOTO_SPEED, DECCEL, 0, 1)
-
 sleep(2)
-
-backward(30)
-sleep(4)
+stop()
+# sleep(.5)
+# turn2(30)
+# sleep(3)
+# stop()
+#
+# con3.SpeedAccelDeccelPositionM2(RC_ADDR.FR, ACCEL, GOTO_SPEED, DECCEL, -330, 1)
+# con3.SpeedAccelDeccelPositionM2(RC_ADDR.BL, ACCEL, GOTO_SPEED, DECCEL, 220, 1)
+# con2.SpeedAccelDeccelPositionM2(RC_ADDR.FL, ACCEL, GOTO_SPEED, DECCEL, -220, 1)
+# con2.SpeedAccelDeccelPositionM2(RC_ADDR.BR, ACCEL, GOTO_SPEED, DECCEL, 330, 1)
+#
+# sleep(2)
+#
+# forward(20)
+#
+# sleep(4)
+#
+# backward(20)
+#
+# sleep(4)
+#
+# stop()
+#
+#
+# con3.SpeedAccelDeccelPositionM2(RC_ADDR.FR, ACCEL, GOTO_SPEED, DECCEL, 0, 1)
+# con3.SpeedAccelDeccelPositionM2(RC_ADDR.BL, ACCEL, GOTO_SPEED, DECCEL, 0, 1)
+# con2.SpeedAccelDeccelPositionM2(RC_ADDR.FL, ACCEL, GOTO_SPEED, DECCEL, 0, 1)
+# con2.SpeedAccelDeccelPositionM2(RC_ADDR.BR, ACCEL, GOTO_SPEED, DECCEL, 0, 1)
+#
+# sleep(2)
+#
+# backward(30)
+# sleep(4)
 
 stop()
