@@ -72,11 +72,28 @@ def coords_to_delta_theta(target_long, target_lat, curr_long, curr_lat, curr_the
         delta_theta_deg = math.degrees(math.atan(float(delta_x) / float(delta_y))) - curr_theta_deg
     return delta_theta_deg
 
-def coords_to_target_distance(target_long, target_lat, curr_long, curr_lat):
-    METER_TO_COORD_DEG_RATIO = 111139
-    delta_x = target_long - curr_long
-    delta_y = target_lat - curr_lat
-    return math.sqrt((delta_x**2)+(delta_y**2)) * METER_TO_COORD_DEG_RATIO
+# Takes in target coordinates given current coordinates
+# Returns the distance for direct travel (the hypotenuse)
+def coords_to_target_distance(self, target_long, target_lat, curr_long, curr_lat):
+    # Approximate radius of earth in km
+    R = 6373.0
+
+    curr_lat = math.radians(curr_lat)
+    curr_long = math.radians(curr_long)
+    target_lat = math.radians(target_lat)
+    target_long = math.radians(target_long)
+
+    dlon = target_long - curr_long
+    dlat = target_lat - curr_lat
+
+    a = math.sin(dlat / 2)**2 + math.cos(curr_lat) * math.cos(target_lat) * math.sin(dlon / 2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+    distance = R * c
+
+    print("Result: ", distance)
+    print("Should be: ", 278.546, "km")
+    return distance / 1000
 
 def move_Forward(distance):
     speed = 50
