@@ -37,24 +37,27 @@ else:
 #----------------------------------------------------------------#
 
 #----------------------------------------------------------------#
+my_gps = gps.setup_gps()
 def parse_location(gps_location):
-    #target_lat = gps_location[0:8]
-    #target_long = gps_location[8:]
+    target_lat = gps_location[0:8]
+    target_long = gps_location[8:]
     #fetch rover location
-    my_gps = gps.setup_gps()
 
-    # curr_long = my_gps[1]
-    # curr_lat = my_gps[0]
-    # curr_theta_deg = 0
+    curr_long = curr_lat = None;
+    current_position = gps.get_gps(my_gps)
+    if current_position:
+        curr_long = current_position[1]
+        curr_lat = current_position[0]
+        # curr_theta_deg = 0
+    else:
+        print("ERROR")
 
     #call brets calc functions
     # deg_to_rotate = coords_to_delta_theta(target_long, target_lat, curr_long, curr_lat, curr_theta_deg)
-    # distance_to_move = coords_to_target_distance(target_long, target_lat, curr_long, curr_lat)
+    distance_to_move = coords_to_target_distance(target_long, target_lat, curr_long, curr_lat)
 
     # need to do time calculations/calibration
-
-    Move_Forward(300)
-
+    move_Forward(distance_to_move)
 
 def coords_to_delta_theta(target_long, target_lat, curr_long, curr_lat, curr_theta_deg):
     delta_x = target_long - curr_long
@@ -71,8 +74,7 @@ def coords_to_target_distance(target_long, target_lat, curr_long, curr_lat):
     delta_y = target_lat - curr_lat
     return math.sqrt((delta_x**2)+(delta_y**2))
 
-
-def Move_Forward(distance):
+def move_Forward(distance):
     speed = 50
     time = distance/speed
     forward(speed)
@@ -90,7 +92,7 @@ def forward(speed):
 def main():
     function_set = {
             "GPS": parse_location,
-            "MOVE": Move_Forward 
+            "MOVE": move_Forward 
         }
 
     rover_pipe, comms_pipe = Pipe()
