@@ -39,13 +39,23 @@ else:
 #----------------------------------------------------------------#
 my_gps = gps.setup_gps()
 def parse_location(gps_location):
+    ##############
+    # STEPS: 
+    #     1. RECIEVE GPS 
+    #     2. DETERMINE OWN GPS 
+    #     3. CALCULATE distance and degrees orientation
+    #     4. call function for movement
+    ##############
+
     #cord: 35.300129999999996 N -120.66101979999999
     # target_lat = gps_location[0:8]
     # target_long = gps_location[8:]
+
+    #STEP 1
     target_lat = 35.300129999999996
     target_long = -120.66101979999999
+    #STEP 2
     #fetch rover location
-
     curr_long = curr_lat = None
     current_position = gps.get_gps(my_gps)
     if current_position:
@@ -54,15 +64,12 @@ def parse_location(gps_location):
         # curr_theta_deg = 0
     else:
         print("ERROR")
-
-    #call brets calc functions
-    # deg_to_rotate = coords_to_delta_theta(target_long, target_lat, curr_long, curr_lat, curr_theta_deg)
-    #distance_to_move = coords_to_target_distance(target_long, target_lat, curr_long, curr_lat) * 100
+    #STEP 3
     distance_to_move = gps_to_meters(target_lat, target_long, curr_lat, curr_long)
     print("moving: ", distance_to_move)
     forward = centimeters_to_forward(distance_to_move)
     print("moving: ", forward)
-
+    #STEP 4
     # need to do time calculations/calibration
     move_Forward(forward)
 
