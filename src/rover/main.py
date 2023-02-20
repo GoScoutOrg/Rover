@@ -46,7 +46,7 @@ def parse_location(gps_location):
     target_long = -120.66101979999999
     #fetch rover location
 
-    curr_long = curr_lat = None;
+    curr_long = curr_lat = None
     current_position = gps.get_gps(my_gps)
     if current_position:
         curr_long = current_position[1]
@@ -109,8 +109,6 @@ def main():
             "GPS": parse_location,
             "MOVE": move_Forward 
         }
-
-    #parse_location(2)
     rover_pipe, comms_pipe = Pipe()
     communications = Process(target=c.parent_proc, args=("192.168.4.1",7676, "192.168.4.3", 7777, function_set))
     communications.start()
