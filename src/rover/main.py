@@ -5,6 +5,7 @@ from util import RC_ADDR
 from util import PowerGPIO, UARTException, RC_ADDR
 import RPi.GPIO as GPIO
 import gps_file as gps
+import ICM20948 as icm
 
 import sys
 from multiprocessing import Process, Pipe
