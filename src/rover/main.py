@@ -6,6 +6,7 @@ from util import PowerGPIO, UARTException, RC_ADDR
 import RPi.GPIO as GPIO
 import gps_file as gps
 import ICM20948 as icm_file
+import rover 
 
 import sys
 from multiprocessing import Process, Pipe
