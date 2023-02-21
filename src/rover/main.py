@@ -37,24 +37,44 @@ else:
 #----------------------------------------------------------------#
 
 #----------------------------------------------------------------#
+my_gps = gps.setup_gps()
 def parse_location(gps_location):
-    #target_lat = gps_location[0:8]
-    #target_long = gps_location[8:]
+    ##############
+    # STEPS: 
+    #     1. RECIEVE GPS 
+    #     2. DETERMINE OWN GPS 
+    #     3. CALCULATE distance and degrees orientation
+    #     4. call function for movement
+    ##############
+
+    #cord: 35.300129999999996 N -120.66101979999999
+    # target_lat = gps_location[0:8]
+    # target_long = gps_location[8:]
+
+    #STEP 1
+    target_lat = 35.300129999999996
+    target_long = -120.66101979999999
+    #STEP 2
     #fetch rover location
-    my_gps = gps.setup_gps()
-
-    # curr_long = my_gps[1]
-    # curr_lat = my_gps[0]
-    # curr_theta_deg = 0
-
-    #call brets calc functions
-    # deg_to_rotate = coords_to_delta_theta(target_long, target_lat, curr_long, curr_lat, curr_theta_deg)
-    # distance_to_move = coords_to_target_distance(target_long, target_lat, curr_long, curr_lat)
-
+    curr_long = curr_lat = None
+    current_position = gps.get_gps(my_gps)
+    if current_position:
+        curr_long = current_position[1]
+        curr_lat = current_position[0]
+        # curr_theta_deg = 0
+    else:
+        print("ERROR")
+    #STEP 3
+    distance_to_move = gps_to_meters(target_lat, target_long, curr_lat, curr_long)
+    print("moving: ", distance_to_move)
+    forward = centimeters_to_forward(distance_to_move)
+    print("moving: ", forward)
+    #STEP 4
     # need to do time calculations/calibration
+    move_Forward(forward)
 
-    Move_Forward(300)
-
+#CALCULATIONS
+#----------------------------------------------------------------#
 
 def coords_to_delta_theta(target_long, target_lat, curr_long, curr_lat, curr_theta_deg):
     delta_x = target_long - curr_long
@@ -66,13 +86,32 @@ def coords_to_delta_theta(target_long, target_lat, curr_long, curr_lat, curr_the
         delta_theta_deg = math.degrees(math.atan(float(delta_x) / float(delta_y))) - curr_theta_deg
     return delta_theta_deg
 
+def delta_theta_to_global_target_direction(curr_orientation, delta_theta_deg):
+    global_target_direction = curr_orientation + delta_theta_deg
+    return global_target_direction % 360
+
 def coords_to_target_distance(target_long, target_lat, curr_long, curr_lat):
     delta_x = target_long - curr_long
     delta_y = target_lat - curr_lat
     return math.sqrt((delta_x**2)+(delta_y**2))
+    
+def gps_to_meters(lat1, lon1, lat2, lon2):
+    earth_radius = 6378.137 #KM
+    dlat = lat2 * math.pi / 180 - lat1 * math.pi / 180
+    dlon = lon2 * math.pi / 180 - lon1 * math.pi / 180
+    a = math.sin(dlat/2) * math.sin(dlat/2) + math.cos(lat1 * math.pi / 180) * math.cos(lat2 * math.pi / 180) * math.sin(dlon/2) * math.sin(dlon/2)
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+    d = earth_radius * c
+    return d * 100000 # centimeters
 
+def centimeters_to_forward(x):
+    return 1.56 * x - 2.04
+#----------------------------------------------------------------#
 
-def Move_Forward(distance):
+#FORWARD
+#----------------------------------------------------------------#
+
+def move_Forward(distance):
     speed = 50
     time = distance/speed
     forward(speed)
@@ -85,14 +124,16 @@ def forward(speed):
     con1.BackwardM1(RC_ADDR.MID, speed)
     con1.ForwardM2(RC_ADDR.MID, speed)
     con2.ForwardM1(RC_ADDR.BR, speed)
-    con3.BackwardM1(RC_ADDR.BL, speed)
+    con3.ForwardM1(RC_ADDR.BL, speed)
+
+#----------------------------------------------------------------#
 
 def main():
+    move_Forward(0)
     function_set = {
             "GPS": parse_location,
-            "MOVE": Move_Forward 
+            "MOVE": move_Forward 
         }
-
     rover_pipe, comms_pipe = Pipe()
     communications = Process(target=c.parent_proc, args=("192.168.4.1",7676, "192.168.4.3", 7777, function_set))
     communications.start()
