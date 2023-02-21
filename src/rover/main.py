@@ -141,6 +141,7 @@ def do_tank_turn(target_long, target_lat, curr_long, curr_lat,):
             curr_orientation = icm.getAngle()
 
     delta_theta_deg = coords_to_delta_theta(target_long, target_lat, curr_long, curr_lat, curr_orientation)
+    print("Turning: ", delta_theta_deg)
 
     target = delta_theta_to_global_target_direction(curr_orientation, delta_theta_deg)
     icm_file.tankTurnToAngle(target, icm, con1, con2, con3)
