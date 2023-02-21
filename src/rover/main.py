@@ -134,11 +134,11 @@ def forward(speed):
     con3.ForwardM1(RC_ADDR.BL, speed)
 
 def do_tank_turn(target_long, target_lat, curr_long, curr_lat,):
-    
+    curr_orientation = 0
     for i in range(10):
-        icm_file.getAngle()
+        icm.getAngle()
         if i == 9:
-            curr_orientation = icm_file.getAngle()
+            curr_orientation = icm.getAngle()
 
     delta_theta_deg = coords_to_delta_theta(target_long, target_lat, curr_long, curr_lat, curr_orientation)
 
