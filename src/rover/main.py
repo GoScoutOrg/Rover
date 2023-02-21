@@ -14,9 +14,13 @@ import communications as c
 
 from time import sleep
 
+GOTO_SPEED = 3000 #1750
+ACCEL = DECCEL = 1000
+
 #----------------------------------------------------------------#
 
 #----------------------------------------------------------------#
+
 #init icm 
 icm = icm_file.ICM20948()
 GPIO.setmode(GPIO.BOARD)
@@ -37,7 +41,8 @@ if con3.Open() == 0:
 else:
     print("Successfully Connected")
 
-
+#init rover calibration 
+r = rover.Rover()
 #----------------------------------------------------------------#
 
 #----------------------------------------------------------------#
@@ -133,7 +138,14 @@ def forward(speed):
     con2.ForwardM1(RC_ADDR.BR, speed)
     con3.ForwardM1(RC_ADDR.BL, speed)
 
-def do_tank_turn(target_long, target_lat, curr_long, curr_lat,):
+def do_tank_turn(target_long, target_lat, curr_long, curr_lat):
+    #angle the wheels 
+    con3.SpeedAccelDeccelPositionM2(RC_ADDR.FR, ACCEL, GOTO_SPEED, DECCEL, 300, 1)
+    con3.SpeedAccelDeccelPositionM2(RC_ADDR.BL, ACCEL, GOTO_SPEED, DECCEL, 300, 1)
+    con2.SpeedAccelDeccelPositionM2(RC_ADDR.FL, ACCEL, GOTO_SPEED, DECCEL, -300, 1)
+    con2.SpeedAccelDeccelPositionM2(RC_ADDR.BR, ACCEL, GOTO_SPEED, DECCEL, -300, 1)
+    sleep(2)
+
     curr_orientation = 0
     for i in range(10):
         icm.getAngle()
@@ -145,7 +157,13 @@ def do_tank_turn(target_long, target_lat, curr_long, curr_lat,):
 
     target = delta_theta_to_global_target_direction(curr_orientation, delta_theta_deg)
     icm_file.tankTurnToAngle(target, icm, con1, con2, con3)
+    #unangle the wheels
+    con3.SpeedAccelDeccelPositionM2(RC_ADDR.FR, ACCEL, GOTO_SPEED, DECCEL, 0, 1)
+    con3.SpeedAccelDeccelPositionM2(RC_ADDR.BL, ACCEL, GOTO_SPEED, DECCEL, 0, 1)
+    con2.SpeedAccelDeccelPositionM2(RC_ADDR.FL, ACCEL, GOTO_SPEED, DECCEL, 0, 1)
+    con2.SpeedAccelDeccelPositionM2(RC_ADDR.BR, ACCEL, GOTO_SPEED, DECCEL, 0, 1)
 
+    sleep(2)
 #----------------------------------------------------------------#
 
 def main():
