@@ -66,6 +66,10 @@ def coords_to_delta_theta(target_long, target_lat, curr_long, curr_lat, curr_the
         delta_theta_deg = math.degrees(math.atan(float(delta_x) / float(delta_y))) - curr_theta_deg
     return delta_theta_deg
 
+def delta_theta_to_global_target_direction(curr_orientation, delta_theta_deg):
+    global_target_direction = curr_orientation + delta_theta_deg
+    return global_target_direction % 360
+
 def coords_to_target_distance(target_long, target_lat, curr_long, curr_lat):
     delta_x = target_long - curr_long
     delta_y = target_lat - curr_lat
