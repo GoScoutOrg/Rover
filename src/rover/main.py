@@ -73,6 +73,9 @@ def parse_location(gps_location):
     # need to do time calculations/calibration
     move_Forward(forward)
 
+#CALCULATIONS
+#----------------------------------------------------------------#
+
 def coords_to_delta_theta(target_long, target_lat, curr_long, curr_lat, curr_theta_deg):
     delta_x = target_long - curr_long
     delta_y = target_lat - curr_lat
@@ -94,6 +97,10 @@ def gps_to_meters(lat1, lon1, lat2, lon2):
 
 def centimeters_to_forward(x):
     return 1.56 * x - 2.04
+#----------------------------------------------------------------#
+
+#FORWARD
+#----------------------------------------------------------------#
 
 def move_Forward(distance):
     speed = 50
@@ -109,6 +116,8 @@ def forward(speed):
     con1.ForwardM2(RC_ADDR.MID, speed)
     con2.ForwardM1(RC_ADDR.BR, speed)
     con3.ForwardM1(RC_ADDR.BL, speed)
+
+#----------------------------------------------------------------#
 
 def main():
     move_Forward(0)
