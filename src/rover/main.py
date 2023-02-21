@@ -5,7 +5,7 @@ from util import RC_ADDR
 from util import PowerGPIO, UARTException, RC_ADDR
 import RPi.GPIO as GPIO
 import gps_file as gps
-import ICM20948 as icm
+import ICM20948 as icm_file
 
 import sys
 from multiprocessing import Process, Pipe
@@ -17,8 +17,10 @@ from time import sleep
 #----------------------------------------------------------------#
 
 #----------------------------------------------------------------#
+#init icm 
+icm = icm_file.ICM20948()
 GPIO.setmode(GPIO.BOARD)
-
+#init roboclaws
 con1 = Roboclaw("/dev/ttyS0", 115200, PowerGPIO.ML_MR)
 con2 = Roboclaw("/dev/ttyAMA1", 115200, PowerGPIO.FL_BR)
 con3 = Roboclaw("/dev/ttyAMA2", 115200, PowerGPIO.FR_BL)
@@ -34,6 +36,7 @@ if con3.Open() == 0:
     raise UARTException(con3)
 else:
     print("Successfully Connected")
+
 
 #----------------------------------------------------------------#
 
@@ -70,9 +73,12 @@ def parse_location(gps_location):
     print("moving: ", distance_to_move)
     forward = centimeters_to_forward(distance_to_move)
     print("moving: ", forward)
+
     #STEP 4
+    do_tank_turn(target_long, target_lat, curr_long, curr_lat)
+
     # need to do time calculations/calibration
-    move_Forward(forward)
+    move_forward(forward)
 
 #CALCULATIONS
 #----------------------------------------------------------------#
@@ -109,10 +115,10 @@ def centimeters_to_forward(x):
     return 1.56 * x - 2.04
 #----------------------------------------------------------------#
 
-#FORWARD
+#MOVEMENT
 #----------------------------------------------------------------#
 
-def move_Forward(distance):
+def move_forward(distance):
     speed = 50
     time = distance/speed
     forward(speed)
@@ -127,13 +133,25 @@ def forward(speed):
     con2.ForwardM1(RC_ADDR.BR, speed)
     con3.ForwardM1(RC_ADDR.BL, speed)
 
+def do_tank_turn(target_long, target_lat, curr_long, curr_lat,):
+    
+    for i in range(10):
+        icm_file.getAngle()
+        if i == 9:
+            curr_orientation = icm_file.getAngle()
+
+    delta_theta_deg = coords_to_delta_theta(target_long, target_lat, curr_long, curr_lat, curr_orientation)
+
+    target = delta_theta_to_global_target_direction(curr_orientation, delta_theta_deg)
+    icm_file.tankTurnToAngle(target, icm, con1, con2, con3)
+
 #----------------------------------------------------------------#
 
 def main():
-    move_Forward(0)
+    move_forward(0)
     function_set = {
             "GPS": parse_location,
-            "MOVE": move_Forward 
+            "MOVE": move_forward 
         }
     rover_pipe, comms_pipe = Pipe()
     communications = Process(target=c.parent_proc, args=("192.168.4.1",7676, "192.168.4.3", 7777, function_set))
