@@ -1,5 +1,6 @@
 import math
 
+import rover
 from roboclaw_3 import Roboclaw
 from util import RC_ADDR
 from util import PowerGPIO, UARTException, RC_ADDR
@@ -56,13 +57,14 @@ def parse_location(gps_location):
     #     4. call function for movement
     ##############
 
-    #cord: 35.300129999999996 N -120.66101979999999
+    #coords: 35.3001594 N -120.6610097 
     # target_lat = gps_location[0:8]
     # target_long = gps_location[8:]
 
     #STEP 1
-    target_lat = 35.300129999999996
-    target_long = -120.66101979999999
+    target_lat = 35.3001594
+    target_long = -120.6610097
+
     #STEP 2
     #fetch rover location
     curr_long = curr_lat = None
@@ -136,7 +138,7 @@ def forward(speed):
     con1.BackwardM1(RC_ADDR.MID, speed)
     con1.ForwardM2(RC_ADDR.MID, speed)
     con2.ForwardM1(RC_ADDR.BR, speed)
-    con3.ForwardM1(RC_ADDR.BL, speed)
+    con3.BackwardM1(RC_ADDR.BL, speed)
 
 def do_tank_turn(target_long, target_lat, curr_long, curr_lat):
     #angle the wheels 
