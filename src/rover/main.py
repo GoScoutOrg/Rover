@@ -62,8 +62,13 @@ def parse_location(gps_location):
     # target_long = gps_location[8:]
 
     #STEP 1
-    target_lat = 35.3001594
-    target_long = -120.6610097
+    # target_lat = 35.3001594
+    # target_long = -120.6610097
+
+    vals = gps_location[0].split(':')
+    print(vals)
+    target_lat = float(vals[0])
+    target_long = float(vals[1])
 
     #STEP 2
     #fetch rover location
@@ -175,7 +180,7 @@ def main():
             "MOVE": move_forward 
         }
     rover_pipe, comms_pipe = Pipe()
-    communications = Process(target=c.parent_proc, args=("192.168.4.1",7676, "192.168.4.3", 7777, function_set))
+    communications = Process(target=c.parent_proc, args=("192.168.4.1", 7676, "192.168.4.10", 7777, function_set))
     communications.start()
 
     communications.join()
