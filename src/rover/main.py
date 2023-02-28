@@ -19,7 +19,7 @@ GOTO_SPEED = 3000 #1750
 ACCEL = DECCEL = 1000
 
 #----------------------------------------------------------------#
-
+#INIT 
 #----------------------------------------------------------------#
 
 #init icm 
@@ -45,8 +45,12 @@ else:
 #init rover calibration 
 r = rover.Rover()
 #----------------------------------------------------------------#
-
+#GPS FUNCTIONALITY
 #----------------------------------------------------------------#
+
+def send_ack():
+    c.send_packet(flag = "ROVER_ACK", data= []) 
+
 my_gps = gps.setup_gps()
 def parse_location(gps_location):
     ##############
@@ -85,6 +89,7 @@ def parse_location(gps_location):
 
     # need to do time calculations/calibration
     move_forward(forward)
+#----------------------------------------------------------------#
 
 #CALCULATIONS
 #----------------------------------------------------------------#
@@ -120,7 +125,6 @@ def gps_to_meters(lat1, lon1, lat2, lon2):
 def centimeters_to_forward(x):
     return 1.56 * x - 2.04
 #----------------------------------------------------------------#
-
 #MOVEMENT
 #----------------------------------------------------------------#
 
@@ -130,6 +134,7 @@ def move_forward(distance):
     forward(speed)
     sleep(time)
     forward(0)
+    send_ack()
 
 def forward(speed):
     con3.ForwardM1(RC_ADDR.FR, speed)
@@ -166,6 +171,8 @@ def do_tank_turn(target_long, target_lat, curr_long, curr_lat):
 
     sleep(2)
 #----------------------------------------------------------------#
+#MAIN 
+#----------------------------------------------------------------#
 
 def main():
     move_forward(0)
@@ -174,10 +181,13 @@ def main():
             "MOVE": move_forward 
         }
     rover_pipe, comms_pipe = Pipe()
-    communications = Process(target=c.parent_proc, args=("192.168.4.1",7676, "192.168.4.3", 7777, function_set))
+    communications = Process(target=c.parent_proc, args=("192.168.4.1",7676, "192.168.4.10", 7777, function_set))
     communications.start()
 
     communications.join()
 
 if __name__ == "__main__":
     main()
+
+
+#----------------------------------------------------------------#
