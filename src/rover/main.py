@@ -193,6 +193,12 @@ def main():
 
     communications.start()
 
+    # debugging IMU orientation
+    while(True):
+        print("Current orientation: ", icm.getAngle())
+        sleep(0.2)
+
+
     communications.join()
 
 if __name__ == "__main__":
