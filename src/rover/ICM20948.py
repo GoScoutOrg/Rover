@@ -20,14 +20,51 @@ class ICM20948:
 		self.movingAverageY = [0.0] * self.filterSize
 		self.IMU = qwiic_icm20948.QwiicIcm20948()
 		self.IMU.begin()
+
+		self.ax_constant = 0
+		self.ay_constant = 0
+
+	def calibrate(self):
+		ACCEL = DECCEL = 1000
+		GOTO_SPEED = 3000 #1750
+
+		xmin = ymin = sys.maxsize #Hardcoded maximum size
+		xmax = ymax = -sys.maxsize - 1 #Hardcoded minimum size
+
+		#angle the wheels 
+		con3.SpeedAccelDeccelPositionM2(RC_ADDR.FR, ACCEL, GOTO_SPEED, DECCEL, 300, 1)
+		con3.SpeedAccelDeccelPositionM2(RC_ADDR.BL, ACCEL, GOTO_SPEED, DECCEL, 300, 1)
+		con2.SpeedAccelDeccelPositionM2(RC_ADDR.FL, ACCEL, GOTO_SPEED, DECCEL, -300, 1)
+		con2.SpeedAccelDeccelPositionM2(RC_ADDR.BR, ACCEL, GOTO_SPEED, DECCEL, -300, 1)
+		sleep(2)
+
+		turnCCW(30, con1, con2, con3)
+
+		for _ in range(1500):
+			if self.IMU.dataReady():
+				xmin = min(xmin, -self.IMU.mxRaw)
+				ymin = min(ymin, -self.IMU.myRaw)
+				xmax = max(xmax, -self.IMU.mxRaw)
+				ymax = max(ymax, -self.IMU.myRaw)
+				sleep(0.02)
+
+		stop(con1, con2, con3)
+
+		# self.ax_constant = 136.0
+		# self.ay_constant = 1
+		self.ax_constant = (xmax + xmin) / 2
+		self.ay_constant = (ymax + ymin) / 2
+
+		print(self.ax_constant, self.ay_constant)
+
 	def getAngle(self):
 		if self.IMU.dataReady():
 			self.IMU.getAgmt()
 			ax = -self.IMU.axRaw * 0.001 + 0.000
 			ay =  self.IMU.ayRaw * 0.001 + 0.010
 			az = -self.IMU.azRaw * 0.001 + 0.040
-			mx = -self.IMU.mxRaw - 136.00
-			my = -self.IMU.myRaw - 1
+			mx = -self.IMU.mxRaw - self.ax_constant
+			my = -self.IMU.myRaw - self.ay_constant
 			mz =  self.IMU.mzRaw - 9.50
 			"""
 			roll = math.atan2(-ay, -az)
@@ -42,7 +79,7 @@ class ICM20948:
 			avgY = numpy.mean(self.movingAverageY)
 			self.filterIndex = (self.filterIndex + 1) % self.filterSize
 			#return heading
-			return ((math.atan2(-avgY, avgX) * 180 / math.pi)-90)%360
+			return ((math.atan2(-avgY, avgX) * 180 / math.pi))%360
 		else:
 			print("Waiting for data")
 			time.sleep(0.5)
@@ -88,7 +125,7 @@ def tankTurnToAngle(target, icm, con1, con2, con3):
 	while (abs(delta) > deadZone):
 		heading = icm.getAngle()
 		delta = target - heading
-		if delta > 180: 	delta = delta - 360
+		if delta > 180:		delta = delta - 360
 		elif delta < -180:	delta = delta + 360
 		tankTurn(int((delta / 3.0) + (abs(delta) / delta) * 20.0), con1, con2, con3)
 		time.sleep(0.03)
