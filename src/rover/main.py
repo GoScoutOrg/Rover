@@ -139,22 +139,24 @@ def centimeters_to_forward(x):
 
 def move_forward(distance, target_angle):
     speed = 50
-    seconds = distance / speed
+    seconds = int(distance / speed)
     forward(speed)
-    for _ in range(seconds):
+    for i in range(seconds * 2):
         for _ in range(10):
             icm.getAngle()
             sleep(0.01)
         currentOrientation = icm.getAngle()
         d_theta = currentOrientation - target_angle
-        print("adjusting", d_theta);
+        print("adjusting", d_theta, "\t remaining: ", distance - ((i / 2) * speed));
         
-        con3.SpeedAccelDeccelPositionM2(RC_ADDR.FR, ACCEL, GOTO_SPEED, DECCEL, -10 * d_theta, 1)
-        con3.SpeedAccelDeccelPositionM2(RC_ADDR.BL, ACCEL, GOTO_SPEED, DECCEL, 10 * d_theta, 1)
-        con2.SpeedAccelDeccelPositionM2(RC_ADDR.FL, ACCEL, GOTO_SPEED, DECCEL, -10 * d_theta, 1)
-        con2.SpeedAccelDeccelPositionM2(RC_ADDR.BR, ACCEL, GOTO_SPEED, DECCEL, 10 * d_theta, 1)
+        scaled = int(15 * d_theta)
+        con3.SpeedAccelDeccelPositionM2(RC_ADDR.FR, ACCEL, GOTO_SPEED, DECCEL, scaled, 1)
+        con3.SpeedAccelDeccelPositionM2(RC_ADDR.BL, ACCEL, GOTO_SPEED, DECCEL, -scaled, 1)
+        con2.SpeedAccelDeccelPositionM2(RC_ADDR.FL, ACCEL, GOTO_SPEED, DECCEL, scaled, 1)
+        con2.SpeedAccelDeccelPositionM2(RC_ADDR.BR, ACCEL, GOTO_SPEED, DECCEL, -scaled, 1)
 
-        sleep(0.9)
+        sleep(0.4)
+    forward(0)
     # speed = 50
     # time = distance/speed
     # forward(speed)
@@ -202,7 +204,6 @@ def do_tank_turn(target_long, target_lat, curr_long, curr_lat):
 #----------------------------------------------------------------#
 
 def main():
-    move_forward(0)
     function_set = {
             "GPS": parse_location,
             "MOVE": move_forward 
