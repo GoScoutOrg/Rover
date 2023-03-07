@@ -94,10 +94,10 @@ def parse_location(gps_location):
     print("moving: ", forward)
 
     #STEP 4
-    do_tank_turn(target_long, target_lat, curr_long, curr_lat)
+    target = do_tank_turn(target_long, target_lat, curr_long, curr_lat)
 
     # need to do time calculations/calibration
-    move_forward(forward)
+    move_forward(forward, target)
 #----------------------------------------------------------------#
 
 #CALCULATIONS
@@ -137,13 +137,30 @@ def centimeters_to_forward(x):
 #MOVEMENT
 #----------------------------------------------------------------#
 
-def move_forward(distance):
+def move_forward(distance, target_angle):
     speed = 50
-    time = distance/speed
+    seconds = distance / speed
     forward(speed)
-    sleep(time)
-    forward(0)
-    send_ack()
+    for _ in range(seconds):
+        for _ in range(10):
+            icm.getAngle()
+            sleep(0.01)
+        currentOrientation = icm.getAngle()
+        d_theta = currentOrientation - target_angle
+        print("adjusting", d_theta);
+        
+        con3.SpeedAccelDeccelPositionM2(RC_ADDR.FR, ACCEL, GOTO_SPEED, DECCEL, -10 * d_theta, 1)
+        con3.SpeedAccelDeccelPositionM2(RC_ADDR.BL, ACCEL, GOTO_SPEED, DECCEL, 10 * d_theta, 1)
+        con2.SpeedAccelDeccelPositionM2(RC_ADDR.FL, ACCEL, GOTO_SPEED, DECCEL, -10 * d_theta, 1)
+        con2.SpeedAccelDeccelPositionM2(RC_ADDR.BR, ACCEL, GOTO_SPEED, DECCEL, 10 * d_theta, 1)
+
+        sleep(0.9)
+    # speed = 50
+    # time = distance/speed
+    # forward(speed)
+    # sleep(time)
+    # forward(0)
+    # send_ack()
 
 def forward(speed):
     con3.ForwardM1(RC_ADDR.FR, speed)
@@ -179,6 +196,7 @@ def do_tank_turn(target_long, target_lat, curr_long, curr_lat):
     con2.SpeedAccelDeccelPositionM2(RC_ADDR.BR, ACCEL, GOTO_SPEED, DECCEL, 0, 1)
 
     sleep(2)
+    return target
 #----------------------------------------------------------------#
 #MAIN 
 #----------------------------------------------------------------#
