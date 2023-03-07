@@ -45,6 +45,8 @@ else:
 
 #init rover calibration 
 r = rover.Rover()
+sleep(3)
+icm.calibrate(con1, con2, con3)
 #----------------------------------------------------------------#
 #GPS FUNCTIONALITY
 #----------------------------------------------------------------#
@@ -194,9 +196,9 @@ def main():
     communications.start()
 
     # debugging IMU orientation
-    while(True):
-        print("Current orientation: ", icm.getAngle())
-        sleep(0.2)
+    #while(True):
+    #    print("Current orientation: ", icm.getAngle())
+    #    sleep(0.2)
 
 
     communications.join()
