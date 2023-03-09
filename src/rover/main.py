@@ -64,14 +64,8 @@ def parse_location(gps_location):
     #     4. call function for movement
     ##############
 
-    #coords: 35.3001594 N -120.6610097 
-    # target_lat = gps_location[0:8]
-    # target_long = gps_location[8:]
 
     #STEP 1
-    # target_lat = 35.3001594
-    # target_long = -120.6610097
-
     vals = gps_location[0].split(':')
     print(vals)
     target_lat = float(vals[0])
@@ -84,9 +78,9 @@ def parse_location(gps_location):
     if current_position:
         curr_long = current_position[1]
         curr_lat = current_position[0]
-        # curr_theta_deg = 0
     else:
         print("ERROR")
+
     #STEP 3
     distance_to_move = gps_to_meters(target_lat, target_long, curr_lat, curr_long)
     print("moving: ", distance_to_move)
@@ -96,7 +90,6 @@ def parse_location(gps_location):
     #STEP 4
     target = do_tank_turn(target_long, target_lat, curr_long, curr_lat)
 
-    # need to do time calculations/calibration
     move_forward(forward, target)
 #----------------------------------------------------------------#
 
@@ -157,11 +150,7 @@ def move_forward(distance, target_angle):
 
         sleep(0.4)
     forward(0)
-    # speed = 50
-    # time = distance/speed
-    # forward(speed)
-    # sleep(time)
-    # forward(0)
+
     # send_ack()
 
 def forward(speed):
